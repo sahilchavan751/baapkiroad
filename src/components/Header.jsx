@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Disc3, Volume2, VolumeX } from 'lucide-react';
+import { Disc3, Volume2, VolumeX, Megaphone } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function Header({ isPlaying, onTogglePlaylist, isAmbienceOn, toggleAmbience }) {
+export default function Header({ isPlaying, onTogglePlaylist, isAmbienceOn, toggleAmbience, onPlayHorn }) {
   const [timeString, setTimeString] = useState('');
   const [onlineCount, setOnlineCount] = useState(44);
 
@@ -60,17 +60,27 @@ export default function Header({ isPlaying, onTogglePlaylist, isAmbienceOn, togg
         </div>
       </motion.div>
 
-      {/* Right Section: Ambience Toggle, Playlist Toggle & YT Music */}
+      {/* Right Section: Horn, Ambience, Playlist Toggle & YT Music */}
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.1 }}
         className="flex items-center gap-4 sm:gap-6 pointer-events-auto"
       >
+        {/* Horn Sound Button */}
+        <button
+          onClick={onPlayHorn}
+          className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-white/80 hover:text-amber-300 active:scale-95 transition-all duration-150 cursor-pointer"
+          title="Honk Horn Sound"
+        >
+          <Megaphone className="w-4 h-4 text-amber-400" />
+          <span>Horn</span>
+        </button>
+
         {/* Road Traffic Ambience Sound Toggle */}
         <button
           onClick={toggleAmbience}
-          className={`flex items-center gap-1.5 text-xs sm:text-sm font-medium transition-colors duration-200 ${
+          className={`flex items-center gap-1.5 text-xs sm:text-sm font-medium transition-colors duration-200 cursor-pointer ${
             isAmbienceOn ? 'text-amber-400 font-semibold' : 'text-white/80 hover:text-white'
           }`}
           title="Toggle Road Traffic Ambience Sound"
@@ -89,7 +99,7 @@ export default function Header({ isPlaying, onTogglePlaylist, isAmbienceOn, togg
         {/* Playlist Quick Drawer Button */}
         <button
           onClick={onTogglePlaylist}
-          className="hidden md:flex items-center gap-1.5 text-xs text-white/80 hover:text-white transition-colors duration-200"
+          className="hidden md:flex items-center gap-1.5 text-xs text-white/80 hover:text-white transition-colors duration-200 cursor-pointer"
           title="Browse Playlist Tracks"
         >
           <Disc3 className={`w-4 h-4 ${isPlaying ? 'animate-spin-slow text-red-400' : ''}`} />

@@ -13,9 +13,10 @@ export default function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaylistOpen, setIsPlaylistOpen] = useState(false);
 
-  // Ambience audio state & ref
+  // Ambience & Horn audio state & refs
   const [isAmbienceOn, setIsAmbienceOn] = useState(false);
   const ambienceAudioRef = useRef(null);
+  const hornAudioRef = useRef(null);
 
   const ytPlayerRef = useRef(null);
   const currentSong = SONGS[currentIndex] || SONGS[0];
@@ -33,9 +34,16 @@ export default function App() {
       ambienceAudioRef.current.pause();
       setIsAmbienceOn(false);
     } else {
-      ambienceAudioRef.current.volume = 0.20; // Ensure low volume
+      ambienceAudioRef.current.volume = 0.20;
       ambienceAudioRef.current.play().catch(e => console.warn('Ambience audio play error:', e));
       setIsAmbienceOn(true);
+    }
+  };
+
+  const handlePlayHorn = () => {
+    if (hornAudioRef.current) {
+      hornAudioRef.current.currentTime = 0;
+      hornAudioRef.current.play().catch(e => console.warn('Horn audio play error:', e));
     }
   };
 
@@ -128,6 +136,13 @@ export default function App() {
         preload="auto"
       />
 
+      {/* HTML5 Audio element for Horn sound effect */}
+      <audio
+        ref={hornAudioRef}
+        src="/horn.mp3"
+        preload="auto"
+      />
+
       {/* Hidden YouTube Player — plays individual videos by ID */}
       <YouTubePlayerController
         videoId={currentSong.videoId}
@@ -144,6 +159,7 @@ export default function App() {
         onTogglePlaylist={() => setIsPlaylistOpen(!isPlaylistOpen)}
         isAmbienceOn={isAmbienceOn}
         toggleAmbience={toggleAmbience}
+        onPlayHorn={handlePlayHorn}
       />
 
       {/* Hero Visual Section */}
