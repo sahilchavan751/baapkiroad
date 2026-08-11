@@ -24,7 +24,7 @@ export default function App() {
   // Configure ambience audio volume on mount
   useEffect(() => {
     if (ambienceAudioRef.current) {
-      ambienceAudioRef.current.volume = 0.20; // Low background volume
+      ambienceAudioRef.current.volume = 0.45; // Increased volume for clearer ambience
     }
   }, []);
 
@@ -34,7 +34,7 @@ export default function App() {
       ambienceAudioRef.current.pause();
       setIsAmbienceOn(false);
     } else {
-      ambienceAudioRef.current.volume = 0.20;
+      ambienceAudioRef.current.volume = 0.45; // Increased volume
       ambienceAudioRef.current.play().catch(e => console.warn('Ambience audio play error:', e));
       setIsAmbienceOn(true);
     }
@@ -128,7 +128,7 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-[#0d0907] text-white selection:bg-amber-500 selection:text-black overflow-hidden font-sans">
-      {/* HTML5 Audio element for low-volume road traffic ambience sound */}
+      {/* HTML5 Audio element for road traffic ambience sound */}
       <audio
         ref={ambienceAudioRef}
         src="/traffic-ambience.webm"
