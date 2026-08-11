@@ -24,7 +24,7 @@ export default function App() {
   // Configure ambience audio volume on mount
   useEffect(() => {
     if (ambienceAudioRef.current) {
-      ambienceAudioRef.current.volume = 0.45; // Increased volume for clearer ambience
+      ambienceAudioRef.current.volume = 0.45;
     }
   }, []);
 
@@ -34,7 +34,7 @@ export default function App() {
       ambienceAudioRef.current.pause();
       setIsAmbienceOn(false);
     } else {
-      ambienceAudioRef.current.volume = 0.45; // Increased volume
+      ambienceAudioRef.current.volume = 0.45;
       ambienceAudioRef.current.play().catch(e => console.warn('Ambience audio play error:', e));
       setIsAmbienceOn(true);
     }
@@ -54,17 +54,12 @@ export default function App() {
 
   // YouTube player state changed
   const handleYTStateChange = useCallback((stateCode, player) => {
-    // YT states: -1 unstarted, 0 ended, 1 playing, 2 paused, 3 buffering, 5 cued
     if (stateCode === 1) {
       setIsPlaying(true);
     } else if (stateCode === 2) {
       setIsPlaying(false);
     } else if (stateCode === 0) {
-      // Video ended → play next
-      setCurrentIndex(prev => {
-        const next = (prev + 1) % SONGS.length;
-        return next;
-      });
+      setCurrentIndex(prev => (prev + 1) % SONGS.length);
       setIsPlaying(true);
     }
   }, []);
@@ -78,10 +73,7 @@ export default function App() {
   // Error → skip to next playable video
   const handleYTError = useCallback((errorCode) => {
     console.warn('Skipping unplayable track, error:', errorCode);
-    setCurrentIndex(prev => {
-      const next = (prev + 1) % SONGS.length;
-      return next;
-    });
+    setCurrentIndex(prev => (prev + 1) % SONGS.length);
   }, []);
 
   // ============ Custom UI Controls ============
@@ -157,15 +149,12 @@ export default function App() {
       <Header
         isPlaying={isPlaying}
         onTogglePlaylist={() => setIsPlaylistOpen(!isPlaylistOpen)}
-        isAmbienceOn={isAmbienceOn}
-        toggleAmbience={toggleAmbience}
-        onPlayHorn={handlePlayHorn}
       />
 
       {/* Hero Visual Section */}
       <HeroBanner isPlaying={isPlaying} />
 
-      {/* Custom Glassmorphism Audio Player UI */}
+      {/* Custom Glassmorphism Audio Player UI with Horn & Ambience buttons */}
       <AudioPlayer
         currentSong={{ ...currentSong, durationSec: duration }}
         isPlaying={isPlaying}
@@ -176,6 +165,9 @@ export default function App() {
         duration={duration}
         onSeek={handleSeek}
         onOpenPlaylist={() => setIsPlaylistOpen(true)}
+        isAmbienceOn={isAmbienceOn}
+        toggleAmbience={toggleAmbience}
+        onPlayHorn={handlePlayHorn}
       />
 
       {/* Tracklist Drawer */}
