@@ -8,7 +8,7 @@ export default function HeroBanner({ isPlaying }) {
       <div className="absolute inset-0 z-0">
         <img
           src="/saloon_bg.png"
-          alt="Rickshawala Saloon Background Illustration"
+          alt="Rickshawala Background Illustration"
           className={`w-full h-full object-cover object-center transition-transform duration-10000 ease-out ${
             isPlaying ? 'scale-105' : 'scale-100'
           }`}
@@ -27,7 +27,7 @@ export default function HeroBanner({ isPlaying }) {
       >
         <img
           src="/title.png"
-          alt="Baap Ki Road Title"
+          alt="Rickshawala Title"
           className="w-[50vw] max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl h-auto object-contain filter drop-shadow-[0_10px_25px_rgba(0,0,0,0.9)] drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]"
         />
       </motion.div>
