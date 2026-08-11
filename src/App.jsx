@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Header from './components/Header';
 import HeroBanner from './components/HeroBanner';
 import AudioPlayer from './components/AudioPlayer';
@@ -13,8 +13,31 @@ export default function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaylistOpen, setIsPlaylistOpen] = useState(false);
 
+  // Ambience audio state & ref
+  const [isAmbienceOn, setIsAmbienceOn] = useState(false);
+  const ambienceAudioRef = useRef(null);
+
   const ytPlayerRef = useRef(null);
   const currentSong = SONGS[currentIndex] || SONGS[0];
+
+  // Configure ambience audio volume on mount
+  useEffect(() => {
+    if (ambienceAudioRef.current) {
+      ambienceAudioRef.current.volume = 0.20; // Low background volume
+    }
+  }, []);
+
+  const toggleAmbience = () => {
+    if (!ambienceAudioRef.current) return;
+    if (isAmbienceOn) {
+      ambienceAudioRef.current.pause();
+      setIsAmbienceOn(false);
+    } else {
+      ambienceAudioRef.current.volume = 0.20; // Ensure low volume
+      ambienceAudioRef.current.play().catch(e => console.warn('Ambience audio play error:', e));
+      setIsAmbienceOn(true);
+    }
+  };
 
   // YouTube player is ready
   const handleYTPlayerReady = useCallback((player) => {
@@ -97,6 +120,14 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-[#0d0907] text-white selection:bg-amber-500 selection:text-black overflow-hidden font-sans">
+      {/* HTML5 Audio element for low-volume road traffic ambience sound */}
+      <audio
+        ref={ambienceAudioRef}
+        src="/traffic-ambience.webm"
+        loop
+        preload="auto"
+      />
+
       {/* Hidden YouTube Player — plays individual videos by ID */}
       <YouTubePlayerController
         videoId={currentSong.videoId}
@@ -111,6 +142,8 @@ export default function App() {
       <Header
         isPlaying={isPlaying}
         onTogglePlaylist={() => setIsPlaylistOpen(!isPlaylistOpen)}
+        isAmbienceOn={isAmbienceOn}
+        toggleAmbience={toggleAmbience}
       />
 
       {/* Hero Visual Section */}

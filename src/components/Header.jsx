@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Disc3 } from 'lucide-react';
+import { Disc3, Volume2, VolumeX } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function Header({ isPlaying, onTogglePlaylist }) {
+export default function Header({ isPlaying, onTogglePlaylist, isAmbienceOn, toggleAmbience }) {
   const [timeString, setTimeString] = useState('');
   const [onlineCount, setOnlineCount] = useState(44);
 
@@ -40,7 +40,7 @@ export default function Header({ isPlaying, onTogglePlaylist }) {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 px-5 sm:px-8 py-5 flex items-center justify-between pointer-events-none drop-shadow-md">
-      {/* Left Section: Time & Online badge without pill shape */}
+      {/* Left Section: Time & Online badge */}
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -60,13 +60,32 @@ export default function Header({ isPlaying, onTogglePlaylist }) {
         </div>
       </motion.div>
 
-      {/* Right Section: YT Music & Playlist Toggle without pill shape & Spotify removed */}
+      {/* Right Section: Ambience Toggle, Playlist Toggle & YT Music */}
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.1 }}
         className="flex items-center gap-4 sm:gap-6 pointer-events-auto"
       >
+        {/* Road Traffic Ambience Sound Toggle */}
+        <button
+          onClick={toggleAmbience}
+          className={`flex items-center gap-1.5 text-xs sm:text-sm font-medium transition-colors duration-200 ${
+            isAmbienceOn ? 'text-amber-400 font-semibold' : 'text-white/80 hover:text-white'
+          }`}
+          title="Toggle Road Traffic Ambience Sound"
+        >
+          {isAmbienceOn ? (
+            <Volume2 className="w-4 h-4 text-amber-400 animate-pulse" />
+          ) : (
+            <VolumeX className="w-4 h-4 text-white/60" />
+          )}
+          <span>Ambience</span>
+          {isAmbienceOn && (
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping ml-0.5" />
+          )}
+        </button>
+
         {/* Playlist Quick Drawer Button */}
         <button
           onClick={onTogglePlaylist}
