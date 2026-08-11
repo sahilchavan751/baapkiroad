@@ -30,9 +30,31 @@ export default function App() {
     hornAudioRef.current = new Audio('/horn.mp3');
     hornAudioRef.current.volume = 0.85;
 
+    // Mobile touch listener to unlock HTML5 audio context on first gesture
+    const unlockMobileAudio = () => {
+      if (ambienceAudioRef.current) {
+        ambienceAudioRef.current.play().then(() => {
+          if (!isAmbienceOn) ambienceAudioRef.current.pause();
+        }).catch(() => {});
+      }
+      if (hornAudioRef.current) {
+        hornAudioRef.current.play().then(() => {
+          hornAudioRef.current.pause();
+          hornAudioRef.current.currentTime = 0;
+        }).catch(() => {});
+      }
+      window.removeEventListener('touchstart', unlockMobileAudio);
+      window.removeEventListener('click', unlockMobileAudio);
+    };
+
+    window.addEventListener('touchstart', unlockMobileAudio, { once: true });
+    window.addEventListener('click', unlockMobileAudio, { once: true });
+
     return () => {
       if (ambienceAudioRef.current) ambienceAudioRef.current.pause();
       if (hornAudioRef.current) hornAudioRef.current.pause();
+      window.removeEventListener('touchstart', unlockMobileAudio);
+      window.removeEventListener('click', unlockMobileAudio);
     };
   }, []);
 
@@ -84,12 +106,12 @@ export default function App() {
   }, []);
 
   // YouTube player state changed
-  const handleYTStateChange = useCallback((stateCode, player) => {
-    if (stateCode === 1) {
+  const handleYTStateChange = useCallback((stateCode) => {
+    if (stateCode === 1) { // PLAYING
       setIsPlaying(true);
-    } else if (stateCode === 2) {
+    } else if (stateCode === 2) { // PAUSED
       setIsPlaying(false);
-    } else if (stateCode === 0) {
+    } else if (stateCode === 0) { // ENDED -> auto advance
       setCurrentIndex(prev => (prev + 1) % SONGS.length);
       setIsPlaying(true);
     }
@@ -101,9 +123,9 @@ export default function App() {
     if (dur > 0) setDuration(dur);
   }, []);
 
-  // Error → skip to next playable video
+  // Error -> skip to next track
   const handleYTError = useCallback((errorCode) => {
-    console.warn('Skipping unplayable track, error:', errorCode);
+    console.warn('Skipping unplayable track, YT error code:', errorCode);
     setCurrentIndex(prev => (prev + 1) % SONGS.length);
   }, []);
 
@@ -132,26 +154,43 @@ export default function App() {
   };
 
   const handlePrevious = () => {
-    setCurrentIndex(prev => (prev - 1 + SONGS.length) % SONGS.length);
+    const nextIdx = (currentIndex - 1 + SONGS.length) % SONGS.length;
+    setCurrentIndex(nextIdx);
     setCurrentTime(0);
     setIsPlaying(true);
+    if (ytPlayerRef.current && typeof ytPlayerRef.current.loadVideoById === 'function') {
+      try {
+        ytPlayerRef.current.loadVideoById(SONGS[nextIdx].videoId);
+      } catch (e) { /* ignore */ }
+    }
   };
 
   const handleNext = () => {
-    setCurrentIndex(prev => (prev + 1) % SONGS.length);
+    const nextIdx = (currentIndex + 1) % SONGS.length;
+    setCurrentIndex(nextIdx);
     setCurrentTime(0);
     setIsPlaying(true);
+    if (ytPlayerRef.current && typeof ytPlayerRef.current.loadVideoById === 'function') {
+      try {
+        ytPlayerRef.current.loadVideoById(SONGS[nextIdx].videoId);
+      } catch (e) { /* ignore */ }
+    }
   };
 
   const handleSelectSong = (index) => {
     setCurrentIndex(index);
     setCurrentTime(0);
     setIsPlaying(true);
+    if (ytPlayerRef.current && typeof ytPlayerRef.current.loadVideoById === 'function') {
+      try {
+        ytPlayerRef.current.loadVideoById(SONGS[index].videoId);
+      } catch (e) { /* ignore */ }
+    }
   };
 
   return (
     <div className="relative min-h-screen bg-[#0d0907] text-white selection:bg-amber-500 selection:text-black overflow-hidden font-sans">
-      {/* Hidden YouTube Player — plays individual videos by ID */}
+      {/* Hidden YouTube Player Controller */}
       <YouTubePlayerController
         videoId={currentSong.videoId}
         isPlaying={isPlaying}

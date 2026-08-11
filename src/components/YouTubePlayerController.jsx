@@ -12,14 +12,15 @@ export default function YouTubePlayerController({
   const timerRef = useRef(null);
   const readyRef = useRef(false);
   const currentVideoIdRef = useRef(videoId);
-  const hasUserInteractedRef = useRef(false);
+  const isPlayingRef = useRef(isPlaying);
 
   useEffect(() => {
     currentVideoIdRef.current = videoId;
-  }, [videoId]);
+    isPlayingRef.current = isPlaying;
+  }, [videoId, isPlaying]);
 
   useEffect(() => {
-    // Load YouTube IFrame API script once
+    // Load YouTube IFrame API script once if not already present
     if (!window.YT) {
       const tag = document.createElement('script');
       tag.src = 'https://www.youtube.com/iframe_api';
@@ -30,11 +31,10 @@ export default function YouTubePlayerController({
     const initPlayer = () => {
       if (playerRef.current) return;
 
-      playerRef.current = new window.YT.Player('yt-hidden-player', {
-        height: '40',
-        width: '60',
+      playerRef.current = new window.YT.Player('yt-player-instance', {
+        height: '100%',
+        width: '100%',
         videoId: currentVideoIdRef.current,
-        host: 'https://www.youtube-nocookie.com',
         playerVars: {
           autoplay: 0,
           controls: 0,
@@ -46,7 +46,7 @@ export default function YouTubePlayerController({
           iv_load_policy: 3,
           enablejsapi: 1,
           origin: window.location.origin,
-          playsinline: 1,  // Critical for iOS
+          playsinline: 1, // Essential for mobile iOS inline playback
         },
         events: {
           onReady: (event) => {
@@ -70,39 +70,49 @@ export default function YouTubePlayerController({
       window.onYouTubeIframeAPIReady = initPlayer;
     }
 
-    // Track first user interaction for mobile autoplay unlock
-    const handleUserInteraction = () => {
-      hasUserInteractedRef.current = true;
-      document.removeEventListener('touchstart', handleUserInteraction);
-      document.removeEventListener('click', handleUserInteraction);
-    };
-    document.addEventListener('touchstart', handleUserInteraction, { once: true });
-    document.addEventListener('click', handleUserInteraction, { once: true });
-
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
-      document.removeEventListener('touchstart', handleUserInteraction);
-      document.removeEventListener('click', handleUserInteraction);
     };
   }, []);
 
-  // When videoId prop changes, load the new video
+  // Handle track change (videoId)
   useEffect(() => {
     if (readyRef.current && playerRef.current && videoId) {
       try {
-        // On mobile, cueVideoById doesn't autoplay (good for initial load)
-        // loadVideoById auto-plays which requires prior user interaction
-        playerRef.current.loadVideoById({
-          videoId: videoId,
-          startSeconds: 0
-        });
+        if (isPlayingRef.current) {
+          playerRef.current.loadVideoById({
+            videoId: videoId,
+            startSeconds: 0
+          });
+        } else {
+          playerRef.current.cueVideoById({
+            videoId: videoId,
+            startSeconds: 0
+          });
+        }
       } catch (e) {
-        console.warn('Error loading video:', e);
+        console.warn('Error changing video:', e);
       }
     }
   }, [videoId]);
 
-  // Time update polling
+  // Sync play/pause state changes
+  useEffect(() => {
+    if (readyRef.current && playerRef.current && typeof playerRef.current.getPlayerState === 'function') {
+      try {
+        const state = playerRef.current.getPlayerState();
+        if (isPlaying && state !== window.YT.PlayerState.PLAYING && state !== window.YT.PlayerState.BUFFERING) {
+          playerRef.current.playVideo();
+        } else if (!isPlaying && state === window.YT.PlayerState.PLAYING) {
+          playerRef.current.pauseVideo();
+        }
+      } catch (e) {
+        console.warn('Error syncing play/pause:', e);
+      }
+    }
+  }, [isPlaying]);
+
+  // Time update polling loop
   useEffect(() => {
     if (isPlaying) {
       timerRef.current = setInterval(() => {
@@ -122,26 +132,15 @@ export default function YouTubePlayerController({
     };
   }, [isPlaying, onTimeUpdate]);
 
-  // The iframe MUST have real dimensions and not be fully invisible on mobile.
-  // Mobile browsers (especially iOS Safari) will refuse to play audio from
-  // iframes that are display:none, visibility:hidden, or 0x0 pixels.
-  // We use a small visible iframe tucked behind the player bar.
+  // Mobile browsers require the iframe to have actual layout dimensions
+  // and be rendered on-screen (not display:none, not opacity 0).
+  // We position it fixed in the background behind the app UI at 5% opacity.
   return (
     <div
+      className="fixed bottom-0 right-0 w-32 h-20 pointer-events-none opacity-5 z-0 overflow-hidden"
       aria-hidden="true"
-      style={{
-        position: 'fixed',
-        bottom: '0px',
-        left: '0px',
-        width: '60px',
-        height: '40px',
-        overflow: 'hidden',
-        opacity: 0.001,
-        pointerEvents: 'none',
-        zIndex: 0,
-      }}
     >
-      <div id="yt-hidden-player" />
+      <div id="yt-player-instance" className="w-full h-full" />
     </div>
   );
 }
