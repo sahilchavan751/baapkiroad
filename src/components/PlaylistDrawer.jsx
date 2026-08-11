@@ -75,8 +75,8 @@ export default function PlaylistDrawer({
               </div>
             </div>
 
-            {/* Song List */}
-            <div className="flex flex-col gap-1 max-h-[340px] overflow-y-auto pr-1 scrollbar-thin">
+            {/* Song List - Clean Hidden Scrollbar */}
+            <div className="flex flex-col gap-1 max-h-[340px] overflow-y-auto pr-1 no-scrollbar">
               {SONGS.map((song, index) => {
                 const isActive = index === currentIndex;
 

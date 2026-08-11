@@ -20,16 +20,31 @@
   font-family: 'Rozha One', 'Tiro Devanagari Hindi', serif;
 }
 
-/* Custom scrollbar */
+/* Hide default scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom subtle scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: #110d0a;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #3a2e26;
-  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
 }
 
 /* Vinyl animation */
