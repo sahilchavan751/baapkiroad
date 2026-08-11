@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Pause, SkipBack, SkipForward, ListMusic, Megaphone, Volume2, VolumeX } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, ListMusic, Megaphone, Volume2, VolumeX, Shuffle, Repeat, Repeat1 } from 'lucide-react';
 
 export default function AudioPlayer({
   currentSong,
@@ -14,7 +14,11 @@ export default function AudioPlayer({
   onOpenPlaylist,
   isAmbienceOn,
   toggleAmbience,
-  onPlayHorn
+  onPlayHorn,
+  isShuffle,
+  toggleShuffle,
+  repeatMode,
+  toggleRepeat
 }) {
   const progressBarRef = useRef(null);
 
@@ -128,10 +132,10 @@ export default function AudioPlayer({
           </div>
 
           <div className="flex flex-col min-w-0 pr-1">
-            <h3 className="text-xs sm:text-sm font-semibold text-white truncate max-w-[130px] sm:max-w-[200px] md:max-w-[240px]" title={currentSong.title}>
+            <h3 className="text-xs sm:text-sm font-semibold text-white truncate max-w-[120px] sm:max-w-[180px] md:max-w-[220px]" title={currentSong.title}>
               {currentSong.title}
             </h3>
-            <p className="text-[11px] sm:text-xs text-white/70 truncate max-w-[130px] sm:max-w-[200px]" title={currentSong.artist}>
+            <p className="text-[11px] sm:text-xs text-white/70 truncate max-w-[120px] sm:max-w-[180px]" title={currentSong.artist}>
               {currentSong.artist}
             </p>
 
@@ -144,7 +148,7 @@ export default function AudioPlayer({
         </div>
 
         {/* Middle: Progress Bar */}
-        <div className="hidden sm:flex flex-col flex-1 max-w-[220px] mx-2 gap-1">
+        <div className="hidden sm:flex flex-col flex-1 max-w-[180px] mx-1 gap-1">
           <div
             ref={progressBarRef}
             onClick={handleProgressClick}
@@ -157,8 +161,23 @@ export default function AudioPlayer({
           </div>
         </div>
 
-        {/* Right: Playback Controls */}
-        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+        {/* Right: Playback Controls (Shuffle, Prev, Play/Pause, Next, Repeat) */}
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+          {/* Shuffle Button */}
+          <button
+            type="button"
+            onClick={toggleShuffle}
+            className={`p-1.5 sm:p-2 rounded-full transition-all active:scale-95 cursor-pointer ${
+              isShuffle
+                ? 'text-amber-400 bg-amber-500/20 border border-amber-400/40 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
+                : 'text-white/50 hover:text-white hover:bg-white/10'
+            }`}
+            title={isShuffle ? 'Shuffle On' : 'Shuffle Off'}
+          >
+            <Shuffle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          </button>
+
+          {/* Previous Button */}
           <button
             type="button"
             onClick={onPrevious}
@@ -168,6 +187,7 @@ export default function AudioPlayer({
             <SkipBack className="w-4 h-4 sm:w-5 sm:h-5 fill-current text-white" />
           </button>
 
+          {/* Play/Pause Main Button */}
           <motion.button
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.94 }}
@@ -182,6 +202,7 @@ export default function AudioPlayer({
             )}
           </motion.button>
 
+          {/* Next Button */}
           <button
             type="button"
             onClick={onNext}
@@ -189,6 +210,30 @@ export default function AudioPlayer({
             title="Next Track"
           >
             <SkipForward className="w-4 h-4 sm:w-5 sm:h-5 fill-current text-white" />
+          </button>
+
+          {/* Repeat Button (Off -> All -> One) */}
+          <button
+            type="button"
+            onClick={toggleRepeat}
+            className={`p-1.5 sm:p-2 rounded-full transition-all active:scale-95 cursor-pointer ${
+              repeatMode !== 'off'
+                ? 'text-amber-400 bg-amber-500/20 border border-amber-400/40 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
+                : 'text-white/50 hover:text-white hover:bg-white/10'
+            }`}
+            title={
+              repeatMode === 'one'
+                ? 'Repeat One'
+                : repeatMode === 'all'
+                ? 'Repeat All'
+                : 'Repeat Off'
+            }
+          >
+            {repeatMode === 'one' ? (
+              <Repeat1 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            ) : (
+              <Repeat className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            )}
           </button>
         </div>
       </div>

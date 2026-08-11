@@ -13,6 +13,20 @@ export default function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaylistOpen, setIsPlaylistOpen] = useState(false);
 
+  // Shuffle & Repeat state
+  const [isShuffle, setIsShuffle] = useState(false);
+  const [repeatMode, setRepeatMode] = useState('all'); // 'off' | 'all' | 'one'
+
+  const isShuffleRef = useRef(isShuffle);
+  const repeatModeRef = useRef(repeatMode);
+  const currentIndexRef = useRef(currentIndex);
+
+  useEffect(() => {
+    isShuffleRef.current = isShuffle;
+    repeatModeRef.current = repeatMode;
+    currentIndexRef.current = currentIndex;
+  }, [isShuffle, repeatMode, currentIndex]);
+
   // Ambience & Horn audio state & refs
   const [isAmbienceOn, setIsAmbienceOn] = useState(false);
   const ambienceAudioRef = useRef(null);
@@ -20,6 +34,15 @@ export default function App() {
 
   const ytPlayerRef = useRef(null);
   const currentSong = SONGS[currentIndex] || SONGS[0];
+
+  const getRandomIndex = (currIdx) => {
+    if (SONGS.length <= 1) return 0;
+    let nextIdx = currIdx;
+    while (nextIdx === currIdx) {
+      nextIdx = Math.floor(Math.random() * SONGS.length);
+    }
+    return nextIdx;
+  };
 
   // Configure ambience & horn audio instances on mount
   useEffect(() => {
@@ -111,9 +134,28 @@ export default function App() {
       setIsPlaying(true);
     } else if (stateCode === 2) { // PAUSED
       setIsPlaying(false);
-    } else if (stateCode === 0) { // ENDED -> auto advance
-      setCurrentIndex(prev => (prev + 1) % SONGS.length);
-      setIsPlaying(true);
+    } else if (stateCode === 0) { // ENDED -> handle repeat / shuffle / next
+      if (repeatModeRef.current === 'one') {
+        if (ytPlayerRef.current && typeof ytPlayerRef.current.seekTo === 'function') {
+          ytPlayerRef.current.seekTo(0, true);
+          ytPlayerRef.current.playVideo();
+        }
+        setIsPlaying(true);
+      } else if (isShuffleRef.current) {
+        const nextIdx = getRandomIndex(currentIndexRef.current);
+        setCurrentIndex(nextIdx);
+        setIsPlaying(true);
+        if (ytPlayerRef.current && typeof ytPlayerRef.current.loadVideoById === 'function') {
+          ytPlayerRef.current.loadVideoById(SONGS[nextIdx].videoId);
+        }
+      } else {
+        const nextIdx = (currentIndexRef.current + 1) % SONGS.length;
+        setCurrentIndex(nextIdx);
+        setIsPlaying(true);
+        if (ytPlayerRef.current && typeof ytPlayerRef.current.loadVideoById === 'function') {
+          ytPlayerRef.current.loadVideoById(SONGS[nextIdx].videoId);
+        }
+      }
     }
   }, []);
 
@@ -126,10 +168,23 @@ export default function App() {
   // Error -> skip to next track
   const handleYTError = useCallback((errorCode) => {
     console.warn('Skipping unplayable track, YT error code:', errorCode);
-    setCurrentIndex(prev => (prev + 1) % SONGS.length);
+    const nextIdx = isShuffleRef.current ? getRandomIndex(currentIndexRef.current) : (currentIndexRef.current + 1) % SONGS.length;
+    setCurrentIndex(nextIdx);
   }, []);
 
   // ============ Custom UI Controls ============
+
+  const toggleShuffle = () => {
+    setIsShuffle(prev => !prev);
+  };
+
+  const toggleRepeat = () => {
+    setRepeatMode(prev => {
+      if (prev === 'off') return 'all';
+      if (prev === 'all') return 'one';
+      return 'off';
+    });
+  };
 
   const togglePlay = () => {
     if (!ytPlayerRef.current) return;
@@ -154,19 +209,29 @@ export default function App() {
   };
 
   const handlePrevious = () => {
-    const nextIdx = (currentIndex - 1 + SONGS.length) % SONGS.length;
-    setCurrentIndex(nextIdx);
+    let prevIdx;
+    if (isShuffle) {
+      prevIdx = getRandomIndex(currentIndex);
+    } else {
+      prevIdx = (currentIndex - 1 + SONGS.length) % SONGS.length;
+    }
+    setCurrentIndex(prevIdx);
     setCurrentTime(0);
     setIsPlaying(true);
     if (ytPlayerRef.current && typeof ytPlayerRef.current.loadVideoById === 'function') {
       try {
-        ytPlayerRef.current.loadVideoById(SONGS[nextIdx].videoId);
+        ytPlayerRef.current.loadVideoById(SONGS[prevIdx].videoId);
       } catch (e) { /* ignore */ }
     }
   };
 
   const handleNext = () => {
-    const nextIdx = (currentIndex + 1) % SONGS.length;
+    let nextIdx;
+    if (isShuffle) {
+      nextIdx = getRandomIndex(currentIndex);
+    } else {
+      nextIdx = (currentIndex + 1) % SONGS.length;
+    }
     setCurrentIndex(nextIdx);
     setCurrentTime(0);
     setIsPlaying(true);
@@ -209,7 +274,7 @@ export default function App() {
       {/* Hero Visual Section */}
       <HeroBanner isPlaying={isPlaying} />
 
-      {/* Sleek Custom Audio Player with Floating Horn & Ambience buttons */}
+      {/* Sleek Custom Audio Player */}
       <AudioPlayer
         currentSong={{ ...currentSong, durationSec: duration }}
         isPlaying={isPlaying}
@@ -223,6 +288,10 @@ export default function App() {
         isAmbienceOn={isAmbienceOn}
         toggleAmbience={toggleAmbience}
         onPlayHorn={handlePlayHorn}
+        isShuffle={isShuffle}
+        toggleShuffle={toggleShuffle}
+        repeatMode={repeatMode}
+        toggleRepeat={toggleRepeat}
       />
 
       {/* Tracklist Drawer */}
