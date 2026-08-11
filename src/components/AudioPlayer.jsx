@@ -37,75 +37,75 @@ export default function AudioPlayer({
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className="fixed bottom-5 sm:bottom-7 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-xl sm:max-w-2xl flex flex-col items-center gap-2 pointer-events-none">
-      {/* Floating Sound Effect Pill Buttons Row (Horn & Ambience) above the main player */}
-      <motion.div 
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="flex items-center gap-2.5 pointer-events-auto"
-      >
-        {/* Horn Button */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onPlayHorn();
-          }}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium text-white bg-neutral-900/80 hover:bg-neutral-800 backdrop-blur-xl border border-white/15 shadow-lg active:scale-95 transition-all cursor-pointer"
-          title="Honk Horn Sound"
-        >
-          <Megaphone className="w-3.5 h-3.5 text-amber-400" />
-          <span>Horn</span>
-        </button>
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed bottom-5 sm:bottom-7 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-xl sm:max-w-2xl p-3 sm:p-4 rounded-[28px] bg-neutral-900/90 backdrop-blur-2xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.85)] flex flex-col gap-2.5 text-white"
+    >
+      {/* Attached Top Control Row: Horn, Ambience & Playlist */}
+      <div className="flex items-center justify-between pb-2 border-b border-white/10 px-1">
+        <div className="flex items-center gap-2">
+          {/* Horn Button */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onPlayHorn();
+            }}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-white/90 hover:text-white bg-white/10 hover:bg-white/20 active:scale-95 transition-all cursor-pointer"
+            title="Honk Horn Sound"
+          >
+            <Megaphone className="w-3.5 h-3.5 text-amber-400" />
+            <span>Horn</span>
+          </button>
 
-        {/* Ambience Button */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleAmbience();
-          }}
-          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium backdrop-blur-xl border shadow-lg transition-all cursor-pointer active:scale-95 ${
-            isAmbienceOn
-              ? 'bg-amber-500/30 border-amber-400/60 text-amber-200 font-semibold shadow-[0_0_15px_rgba(245,158,11,0.3)]'
-              : 'bg-neutral-900/80 border-white/15 hover:bg-neutral-800 text-white/90 hover:text-white'
-          }`}
-          title="Toggle Road Traffic Ambience Sound"
-        >
-          {isAmbienceOn ? (
-            <Volume2 className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-          ) : (
-            <VolumeX className="w-3.5 h-3.5 text-white/70" />
-          )}
-          <span>Ambience</span>
-          {isAmbienceOn && (
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping ml-0.5" />
-          )}
-        </button>
+          {/* Ambience Button */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              toggleAmbience();
+            }}
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer active:scale-95 ${
+              isAmbienceOn
+                ? 'bg-amber-500/30 border border-amber-400/40 text-amber-200 font-semibold shadow-[0_0_12px_rgba(245,158,11,0.25)]'
+                : 'bg-white/10 hover:bg-white/20 text-white/90 hover:text-white'
+            }`}
+            title="Toggle Road Traffic Ambience Sound"
+          >
+            {isAmbienceOn ? (
+              <Volume2 className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
+            ) : (
+              <VolumeX className="w-3.5 h-3.5 text-white/60" />
+            )}
+            <span>Ambience</span>
+            {isAmbienceOn && (
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping ml-0.5" />
+            )}
+          </button>
+        </div>
 
         {/* Playlist Toggle */}
         <button
           type="button"
           onClick={(e) => {
+            e.preventDefault();
             e.stopPropagation();
             onOpenPlaylist();
           }}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium text-white/90 hover:text-white bg-neutral-900/80 hover:bg-neutral-800 backdrop-blur-xl border border-white/15 shadow-lg transition-all cursor-pointer active:scale-95"
+          className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-white/90 hover:text-white bg-white/10 hover:bg-white/20 transition-all cursor-pointer active:scale-95"
           title="Browse Playlist Tracks"
         >
           <ListMusic className="w-3.5 h-3.5 text-white" />
           <span>Playlist</span>
         </button>
-      </motion.div>
+      </div>
 
-      {/* Main Sleek Audio Player Bar */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full px-3 sm:px-6 py-2.5 sm:py-3 rounded-full bg-neutral-900/80 backdrop-blur-xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center justify-between gap-3 sm:gap-6 text-white pointer-events-auto"
-      >
+      {/* Main Track Info & Controls Row */}
+      <div className="flex items-center justify-between gap-3 sm:gap-6 px-1">
         {/* Left: Album Thumbnail & Info */}
         <div className="flex items-center gap-3 min-w-0">
           <div 
@@ -191,7 +191,7 @@ export default function AudioPlayer({
             <SkipForward className="w-4 h-4 sm:w-5 sm:h-5 fill-current text-white" />
           </button>
         </div>
-      </motion.div>
-    </div>
+      </div>
+    </motion.div>
   );
 }

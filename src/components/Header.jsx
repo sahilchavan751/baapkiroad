@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Disc3 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function Header({ isPlaying, onTogglePlaylist }) {
+export default function Header({ isPlaying }) {
   const [timeString, setTimeString] = useState('');
   const [onlineCount, setOnlineCount] = useState(44);
 
@@ -39,18 +38,26 @@ export default function Header({ isPlaying, onTogglePlaylist }) {
   const ytMusicPlaylistUrl = "https://music.youtube.com/playlist?list=PLTJ1PnzCWyFw";
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 px-5 sm:px-8 py-5 flex items-center justify-between pointer-events-none drop-shadow-md">
-      {/* Left Section: Time & Online badge */}
+    <header className="fixed top-0 left-0 right-0 z-40 px-5 sm:px-8 py-5 grid grid-cols-3 items-center pointer-events-none drop-shadow-md">
+      {/* Left: Time Readout */}
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="flex items-center gap-4 sm:gap-6 pointer-events-auto"
+        className="flex items-center justify-start pointer-events-auto"
       >
         <span className="text-white/90 text-sm font-semibold tracking-wider font-mono">
           {timeString || '10:34 am'}
         </span>
+      </motion.div>
 
+      {/* Center: Online Indicator */}
+      <motion.div 
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.05 }}
+        className="flex items-center justify-center pointer-events-auto"
+      >
         <div className="flex items-center gap-2 text-xs text-white/80 font-medium">
           <span className="relative flex h-2.5 w-2.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -60,24 +67,13 @@ export default function Header({ isPlaying, onTogglePlaylist }) {
         </div>
       </motion.div>
 
-      {/* Right Section: Playlist & YT Music Link */}
+      {/* Right: YT Music Link */}
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.1 }}
-        className="flex items-center gap-4 sm:gap-6 pointer-events-auto"
+        className="flex items-center justify-end pointer-events-auto"
       >
-        {/* Playlist Quick Drawer Button */}
-        <button
-          onClick={onTogglePlaylist}
-          className="hidden md:flex items-center gap-1.5 text-xs text-white/80 hover:text-white transition-colors duration-200 cursor-pointer"
-          title="Browse Playlist Tracks"
-        >
-          <Disc3 className={`w-4 h-4 text-white ${isPlaying ? 'animate-spin-slow' : ''}`} />
-          <span>Playlist</span>
-        </button>
-
-        {/* YT Music Playlist Link with White YouTube Icon */}
         <a
           href={ytMusicPlaylistUrl}
           target="_blank"
