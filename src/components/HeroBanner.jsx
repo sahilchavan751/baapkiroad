@@ -10,18 +10,14 @@ export default function HeroBanner({ isPlaying }) {
         <img
           src="/saloon_bg-verticle.png"
           alt="Rickshawala Mobile Background Illustration"
-          className={`block sm:hidden w-full h-full object-cover object-center transition-transform duration-10000 ease-out ${
-            isPlaying ? 'scale-105' : 'scale-100'
-          }`}
+          className="block sm:hidden w-full h-full object-cover object-center"
         />
         
         {/* Desktop Landscape Background */}
         <img
           src="/saloon_bg.png"
           alt="Rickshawala Desktop Background Illustration"
-          className={`hidden sm:block w-full h-full object-cover object-center transition-transform duration-10000 ease-out ${
-            isPlaying ? 'scale-105' : 'scale-100'
-          }`}
+          className="hidden sm:block w-full h-full object-cover object-center"
         />
         
         {/* Subtle Vignette & Atmospheric Contrast Gradients */}
@@ -30,8 +26,8 @@ export default function HeroBanner({ isPlaying }) {
 
       {/* Hero Title Image - Positioned Upper Center */}
       <motion.div
-        initial={{ opacity: 0, y: -20, scale: 0.9 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="relative z-20 pointer-events-none px-4 text-center flex items-center justify-center w-full"
       >
