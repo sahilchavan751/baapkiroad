@@ -73,7 +73,6 @@ export default function Header({ isPlaying }) {
             <path d="M12 0C5.376 0 0 5.376 0 12s5.376 12 12 12 12-5.376 12-12S18.624 0 12 0zm0 19.2c-3.972 0-7.2-3.228-7.2-7.2s3.228-7.2 7.2-7.2 7.2 3.228 7.2 7.2-3.228 7.2-7.2 7.2zm-2.4-10.2v6l5.1-3-5.1-3z"/>
           </svg>
           <span>YT Music</span>
-          <span className="text-white/60 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-xs">↗</span>
         </a>
       </motion.div>
     </header>
