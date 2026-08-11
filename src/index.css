@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #0d0907;
+    color: #ffffff;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+  }
+}
+
+.font-devanagari {
+  font-family: 'Mukta', 'Tiro Devanagari Hindi', sans-serif;
+}
+
+.font-devanagari-serif {
+  font-family: 'Rozha One', 'Tiro Devanagari Hindi', serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #110d0a;
+}
+::-webkit-scrollbar-thumb {
+  background: #3a2e26;
+  border-radius: 3px;
+}
+
+/* Vinyl animation */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
+}
+
+/* Glassmorphism custom glow */
+.player-glass {
+  background: rgba(22, 14, 10, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(234, 88, 12, 0.15);
+}
+
+.nav-glass {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 100%);
+}
