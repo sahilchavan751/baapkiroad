@@ -21,29 +21,60 @@ export default function App() {
   const ytPlayerRef = useRef(null);
   const currentSong = SONGS[currentIndex] || SONGS[0];
 
-  // Configure ambience audio volume on mount
+  // Configure ambience & horn audio instances on mount
   useEffect(() => {
-    if (ambienceAudioRef.current) {
-      ambienceAudioRef.current.volume = 0.45;
-    }
+    ambienceAudioRef.current = new Audio('/traffic-ambience.webm');
+    ambienceAudioRef.current.loop = true;
+    ambienceAudioRef.current.volume = 0.45;
+
+    hornAudioRef.current = new Audio('/horn.mp3');
+    hornAudioRef.current.volume = 0.85;
+
+    return () => {
+      if (ambienceAudioRef.current) ambienceAudioRef.current.pause();
+      if (hornAudioRef.current) hornAudioRef.current.pause();
+    };
   }, []);
 
   const toggleAmbience = () => {
-    if (!ambienceAudioRef.current) return;
+    if (!ambienceAudioRef.current) {
+      ambienceAudioRef.current = new Audio('/traffic-ambience.webm');
+      ambienceAudioRef.current.loop = true;
+    }
+
     if (isAmbienceOn) {
       ambienceAudioRef.current.pause();
       setIsAmbienceOn(false);
     } else {
       ambienceAudioRef.current.volume = 0.45;
-      ambienceAudioRef.current.play().catch(e => console.warn('Ambience audio play error:', e));
+      const playPromise = ambienceAudioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((e) => {
+          console.warn('Ambience audio play error:', e);
+        });
+      }
       setIsAmbienceOn(true);
     }
   };
 
   const handlePlayHorn = () => {
-    if (hornAudioRef.current) {
+    try {
+      if (!hornAudioRef.current) {
+        hornAudioRef.current = new Audio('/horn.mp3');
+      }
       hornAudioRef.current.currentTime = 0;
-      hornAudioRef.current.play().catch(e => console.warn('Horn audio play error:', e));
+      hornAudioRef.current.volume = 0.85;
+      const playPromise = hornAudioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((e) => {
+          console.warn('Horn audio play error:', e);
+          const fallback = new Audio('/horn.mp3');
+          fallback.volume = 0.85;
+          fallback.play();
+        });
+      }
+    } catch (err) {
+      console.error('Horn trigger error:', err);
     }
   };
 
@@ -120,21 +151,6 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-[#0d0907] text-white selection:bg-amber-500 selection:text-black overflow-hidden font-sans">
-      {/* HTML5 Audio element for road traffic ambience sound */}
-      <audio
-        ref={ambienceAudioRef}
-        src="/traffic-ambience.webm"
-        loop
-        preload="auto"
-      />
-
-      {/* HTML5 Audio element for Horn sound effect */}
-      <audio
-        ref={hornAudioRef}
-        src="/horn.mp3"
-        preload="auto"
-      />
-
       {/* Hidden YouTube Player — plays individual videos by ID */}
       <YouTubePlayerController
         videoId={currentSong.videoId}
@@ -154,7 +170,7 @@ export default function App() {
       {/* Hero Visual Section */}
       <HeroBanner isPlaying={isPlaying} />
 
-      {/* Custom Glassmorphism Audio Player UI with Horn & Ambience buttons */}
+      {/* Sleek Custom Audio Player with Floating Horn & Ambience buttons */}
       <AudioPlayer
         currentSong={{ ...currentSong, durationSec: duration }}
         isPlaying={isPlaying}
