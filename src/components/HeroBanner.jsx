@@ -4,12 +4,22 @@ import { motion } from 'framer-motion';
 export default function HeroBanner({ isPlaying }) {
   return (
     <div className="relative w-full h-screen min-h-[600px] overflow-hidden select-none flex flex-col items-center justify-start pt-20 sm:pt-24 md:pt-28">
-      {/* High Quality Hero Background Image */}
+      {/* High Quality Hero Background Image (Mobile & Desktop) */}
       <div className="absolute inset-0 z-0">
+        {/* Mobile Vertical Background */}
+        <img
+          src="/saloon_bg-verticle.png"
+          alt="Rickshawala Mobile Background Illustration"
+          className={`block sm:hidden w-full h-full object-cover object-center transition-transform duration-10000 ease-out ${
+            isPlaying ? 'scale-105' : 'scale-100'
+          }`}
+        />
+        
+        {/* Desktop Landscape Background */}
         <img
           src="/saloon_bg.png"
-          alt="Rickshawala Background Illustration"
-          className={`w-full h-full object-cover object-center transition-transform duration-10000 ease-out ${
+          alt="Rickshawala Desktop Background Illustration"
+          className={`hidden sm:block w-full h-full object-cover object-center transition-transform duration-10000 ease-out ${
             isPlaying ? 'scale-105' : 'scale-100'
           }`}
         />
