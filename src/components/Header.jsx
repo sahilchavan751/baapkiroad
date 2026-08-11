@@ -51,19 +51,19 @@ export default function Header({ isPlaying }) {
         </span>
       </motion.div>
 
-      {/* Center: Online Indicator */}
+      {/* Center: On Road Indicator */}
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.05 }}
         className="flex items-center justify-center pointer-events-auto"
       >
-        <div className="flex items-center gap-2 text-xs text-white/80 font-medium">
+        <div className="flex items-center gap-2 text-xs text-white/90 font-medium bg-black/25 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 shadow-sm">
           <span className="relative flex h-2.5 w-2.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>
           </span>
-          <span>{onlineCount} online</span>
+          <span>{onlineCount} on road</span>
         </div>
       </motion.div>
 

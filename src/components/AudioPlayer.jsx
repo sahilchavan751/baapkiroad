@@ -41,10 +41,10 @@ export default function AudioPlayer({
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-      className="fixed bottom-5 sm:bottom-7 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-xl sm:max-w-2xl p-3 sm:p-4 rounded-[28px] bg-neutral-900/90 backdrop-blur-2xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.85)] flex flex-col gap-2.5 text-white"
+      className="fixed bottom-5 sm:bottom-7 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-xl sm:max-w-2xl p-3.5 sm:p-4 rounded-[28px] bg-black/35 backdrop-blur-2xl border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.6)] flex flex-col gap-2.5 text-white"
     >
       {/* Attached Top Control Row: Horn, Ambience & Playlist */}
-      <div className="flex items-center justify-between pb-2 border-b border-white/10 px-1">
+      <div className="flex items-center justify-between pb-2 border-b border-white/15 px-1">
         <div className="flex items-center gap-2">
           {/* Horn Button */}
           <button
@@ -54,10 +54,10 @@ export default function AudioPlayer({
               e.stopPropagation();
               onPlayHorn();
             }}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-white/90 hover:text-white bg-white/10 hover:bg-white/20 active:scale-95 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-white hover:text-amber-300 bg-white/15 hover:bg-white/25 border border-white/20 active:scale-95 transition-all cursor-pointer"
             title="Honk Horn Sound"
           >
-            <Megaphone className="w-3.5 h-3.5 text-amber-400" />
+            <Megaphone className="w-3.5 h-3.5 text-amber-300" />
             <span>Horn</span>
           </button>
 
@@ -69,17 +69,17 @@ export default function AudioPlayer({
               e.stopPropagation();
               toggleAmbience();
             }}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer active:scale-95 ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer active:scale-95 border ${
               isAmbienceOn
-                ? 'bg-amber-500/30 border border-amber-400/40 text-amber-200 font-semibold shadow-[0_0_12px_rgba(245,158,11,0.25)]'
-                : 'bg-white/10 hover:bg-white/20 text-white/90 hover:text-white'
+                ? 'bg-amber-500/40 border-amber-400/60 text-amber-200 font-semibold shadow-[0_0_15px_rgba(245,158,11,0.3)]'
+                : 'bg-white/15 hover:bg-white/25 border-white/20 text-white'
             }`}
             title="Toggle Road Traffic Ambience Sound"
           >
             {isAmbienceOn ? (
               <Volume2 className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
             ) : (
-              <VolumeX className="w-3.5 h-3.5 text-white/60" />
+              <VolumeX className="w-3.5 h-3.5 text-white/70" />
             )}
             <span>Ambience</span>
             {isAmbienceOn && (
@@ -96,7 +96,7 @@ export default function AudioPlayer({
             e.stopPropagation();
             onOpenPlaylist();
           }}
-          className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-white/90 hover:text-white bg-white/10 hover:bg-white/20 transition-all cursor-pointer active:scale-95"
+          className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-white bg-white/15 hover:bg-white/25 border border-white/20 transition-all cursor-pointer active:scale-95"
           title="Browse Playlist Tracks"
         >
           <ListMusic className="w-3.5 h-3.5 text-white" />
@@ -113,13 +113,13 @@ export default function AudioPlayer({
             className="relative group cursor-pointer shrink-0"
             title="Click to view tracklist"
           >
-            <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden border border-white/20 shadow-md relative bg-neutral-800 transition-transform group-hover:scale-105 ${isPlaying ? 'animate-spin-slow' : ''}`}>
+            <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden border border-white/30 shadow-md relative bg-black/40 transition-transform group-hover:scale-105 ${isPlaying ? 'animate-spin-slow' : ''}`}>
               <img
                 src={currentSong.cover}
                 alt={currentSong.title}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 m-auto w-3 h-3 bg-neutral-900 rounded-full border border-white/30" />
+              <div className="absolute inset-0 m-auto w-3 h-3 bg-neutral-900 rounded-full border border-white/40" />
             </div>
             
             <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -131,11 +131,11 @@ export default function AudioPlayer({
             <h3 className="text-xs sm:text-sm font-semibold text-white truncate max-w-[130px] sm:max-w-[200px] md:max-w-[240px]" title={currentSong.title}>
               {currentSong.title}
             </h3>
-            <p className="text-[11px] sm:text-xs text-white/60 truncate max-w-[130px] sm:max-w-[200px]" title={currentSong.artist}>
+            <p className="text-[11px] sm:text-xs text-white/70 truncate max-w-[130px] sm:max-w-[200px]" title={currentSong.artist}>
               {currentSong.artist}
             </p>
 
-            <div className="flex items-center gap-1 mt-0.5 text-[10px] sm:text-[11px] text-white/50 font-mono tracking-tight">
+            <div className="flex items-center gap-1 mt-0.5 text-[10px] sm:text-[11px] text-white/60 font-mono tracking-tight">
               <span>{formatTime(currentTime)}</span>
               <span>/</span>
               <span>{formatTime(duration || currentSong.durationSec)}</span>
@@ -148,10 +148,10 @@ export default function AudioPlayer({
           <div
             ref={progressBarRef}
             onClick={handleProgressClick}
-            className="relative w-full h-1.5 bg-white/15 hover:bg-white/25 rounded-full cursor-pointer overflow-hidden transition-all group"
+            className="relative w-full h-1.5 bg-white/20 hover:bg-white/30 rounded-full cursor-pointer overflow-hidden transition-all group"
           >
             <div
-              className="h-full bg-gradient-to-r from-red-500 to-amber-400 rounded-full relative transition-all duration-100"
+              className="h-full bg-gradient-to-r from-amber-400 to-white rounded-full relative transition-all duration-100"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -162,7 +162,7 @@ export default function AudioPlayer({
           <button
             type="button"
             onClick={onPrevious}
-            className="p-1.5 sm:p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-95 cursor-pointer"
+            className="p-1.5 sm:p-2 text-white/80 hover:text-white hover:bg-white/15 rounded-full transition-colors active:scale-95 cursor-pointer"
             title="Previous Track"
           >
             <SkipBack className="w-4 h-4 sm:w-5 sm:h-5 fill-current text-white" />
@@ -172,7 +172,7 @@ export default function AudioPlayer({
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.94 }}
             onClick={togglePlay}
-            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white text-black flex items-center justify-center shadow-lg hover:shadow-white/20 transition-all cursor-pointer"
+            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white text-black flex items-center justify-center shadow-lg hover:shadow-white/30 transition-all cursor-pointer"
             title={isPlaying ? "Pause" : "Play"}
           >
             {isPlaying ? (
@@ -185,7 +185,7 @@ export default function AudioPlayer({
           <button
             type="button"
             onClick={onNext}
-            className="p-1.5 sm:p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-95 cursor-pointer"
+            className="p-1.5 sm:p-2 text-white/80 hover:text-white hover:bg-white/15 rounded-full transition-colors active:scale-95 cursor-pointer"
             title="Next Track"
           >
             <SkipForward className="w-4 h-4 sm:w-5 sm:h-5 fill-current text-white" />
