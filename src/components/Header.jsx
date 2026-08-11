@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useRealtimeListeners } from '../hooks/useRealtimeListeners';
 
 export default function Header({ isPlaying }) {
   const [timeString, setTimeString] = useState('');
-  const [onlineCount, setOnlineCount] = useState(44);
+  const onlineCount = useRealtimeListeners();
 
-  // Update clock every minute
+  // Update clock every second
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -21,18 +22,6 @@ export default function Header({ isPlaying }) {
     updateTime();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
-  }, []);
-
-  // Fluctuate online count slightly for live feel
-  useEffect(() => {
-    const countInterval = setInterval(() => {
-      setOnlineCount(prev => {
-        const delta = Math.floor(Math.random() * 3) - 1;
-        const next = prev + delta;
-        return next >= 38 && next <= 62 ? next : prev;
-      });
-    }, 5000);
-    return () => clearInterval(countInterval);
   }, []);
 
   const ytMusicPlaylistUrl = "https://music.youtube.com/playlist?list=PLTJ1PnzCWyFw";
@@ -51,7 +40,7 @@ export default function Header({ isPlaying }) {
         </span>
       </motion.div>
 
-      {/* Center: On Road Indicator */}
+      {/* Center: Realtime On Road Indicator */}
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
