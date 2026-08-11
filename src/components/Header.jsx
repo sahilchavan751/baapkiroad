@@ -47,7 +47,7 @@ export default function Header({ isPlaying }) {
         transition={{ duration: 0.6, delay: 0.05 }}
         className="flex items-center justify-center pointer-events-auto"
       >
-        <div className="flex items-center gap-2 text-xs text-white/90 font-medium bg-black/25 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 shadow-sm">
+        <div className="flex items-center gap-2 text-xs text-white/90 font-medium">
           <span className="relative flex h-2.5 w-2.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>
